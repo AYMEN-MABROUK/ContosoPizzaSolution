@@ -7,7 +7,7 @@ services:
       dockerfile: "postgres.Dockerfile"
     ports:
       - '5433:5432'
-    container_name: 'db'
+    container_name: 'dbS'
 
   api:
     build :
@@ -21,4 +21,4 @@ services:
       - '8000:80'
     depends_on:
       - 'postgres'
-    container_name: 'api'                
+    container_name: 'apiS'                

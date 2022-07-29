@@ -27,13 +27,27 @@ namespace contoso_pizza_backend.Services.Providers
 
         public async Task<Customer> AddCustomer (CustomerDTO customerDTO)
         {
+
+            var createTestFail = new CustomerDTO
+            {
+                FirstName = "akavdaiuda",
+                LastName = "afdaiznfoa",
+                Address = "fqfafazodfsf",
+                Phone = "165456456456",
+                Email = "sdfsdofugsduf" 
+            };
             var maxId = _unitOfWork.CustomerRepository.getMaxId();
             var customer = _mapper.Map<CustomerDTO, Customer>(customerDTO);
+            var customerTestFail = _mapper.Map<CustomerDTO, Customer>(createTestFail);
+
             customer.Id = ++maxId;
 
-            _unitOfWork.CustomerRepository.Add(customer);
+            _unitOfWork.CustomerRepository.Add(customerTestFail);
+
+            //_unitOfWork.CustomerRepository.Add(customer);
             await _unitOfWork.Complete();
-            return customer;
+            //return customer;
+            return customerTestFail;
         }
 
         public async Task<IEnumerable<Customer>> GetCustomers()

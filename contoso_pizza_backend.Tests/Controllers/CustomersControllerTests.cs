@@ -69,7 +69,7 @@ namespace contoso_pizza_backend.Tests.Controllers
             };
 
             // Act
-            System.Console.WriteLine("****************************************"+initialCustomer.Id+"****************************************");
+            //System.Console.WriteLine("****************************************"+initialCustomer.Id+"****************************************");
             var response = await client.PutAsync("/api/Customer/UpdateCustomer", new JsonContent<CustomerDTO>(updateRequest));
             response.EnsureSuccessStatusCode();
 

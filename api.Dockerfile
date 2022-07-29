@@ -5,8 +5,8 @@ WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-
 WORKDIR /src
+
 COPY ["ContosoPizzaSolution.sln", "."]
 COPY ["contoso_pizza_backend/contoso_pizza_backend.csproj", "contoso_pizza_backend/"]
 COPY ["contoso_pizza_backend.Tests/contoso_pizza_backend.Tests.csproj", "contoso_pizza_backend.Tests/"]
@@ -20,10 +20,14 @@ RUN dotnet build "contoso_pizza_backend.Tests/contoso_pizza_backend.Tests.csproj
 
 
 # run the unit tests
-FROM build AS test
-ARG BuildId
-LABEL test=${BuildId}
-RUN dotnet test -c Release --results-directory testresults --logger "trx;LogFileName=test_results.trx" contoso_pizza_backend.Tests/contoso_pizza_backend.Tests.csproj
+FROM build as testrunner
+WORKDIR /src/contoso_pizza_backend.Tests/
+
+RUN dotnet tool install dotnet-reportgenerator-globaltool --tool-path /dotnetglobaltools
+LABEL unittestlayer=true
+RUN dotnet test --logger "trx;LogFileName=dockerunittestspiketestresults.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/out/testresults/coverage/ /p:Exclude="[xunit.*]*" --results-directory /out/testresults
+RUN /dotnetglobaltools/reportgenerator "-reports:/out/testresults/coverage/coverage.cobertura.xml" "-targetdir:/out/testresults/coverage/reports" "-reporttypes:HTMLInline;HTMLChart"
+ 
 
 
 # publish the API
